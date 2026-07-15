@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "practiceassignadf2"
+		},
+		"ADLS_accountKey": {
+			"value": ""
+		},
+		"SalesDatabase_password": {
+			"value": ""
+		},
+		"ADLS_properties_typeProperties_url": {
+			"value": "https://elvis01112003adls.dfs.core.windows.net/"
+		},
+		"SalesDatabase_properties_typeProperties_server": {
+			"value": "practicedb01112003.database.windows.net"
+		},
+		"SalesDatabase_properties_typeProperties_database": {
+			"value": "Mission100Elvis01112003DB"
+		},
+		"SalesDatabase_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		}
+	}
+}
