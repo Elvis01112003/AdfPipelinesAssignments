@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "elvis01112003adf"
+		},
+		"ADLS_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabase_password": {
+			"value": ""
+		},
+		"SalesDatabase_password": {
+			"value": ""
+		},
+		"ADLS_properties_typeProperties_url": {
+			"value": "https://elvis01112003adls.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://elvis01112003adls.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase_properties_typeProperties_server": {
+			"value": "practicedb01112003.database.windows.net"
+		},
+		"AzureSqlDatabase_properties_typeProperties_database": {
+			"value": "Mission100Elvis01112003DB"
+		},
+		"AzureSqlDatabase_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"SalesDatabase_properties_typeProperties_server": {
+			"value": "practicedb01112003.database.windows.net"
+		},
+		"SalesDatabase_properties_typeProperties_database": {
+			"value": "Mission100Elvis01112003DB"
+		},
+		"SalesDatabase_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		}
+	}
+}
