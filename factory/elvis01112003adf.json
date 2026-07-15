@@ -1,0 +1,15 @@
+{
+	"name": "elvis01112003adf",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "cd07e3f3-77f2-49a9-9476-d0f350d0b0f6",
+		"tenantId": "5af3aef4-d510-409d-8b2b-3ada39dcc5fa"
+	}
+}

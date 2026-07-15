@@ -1,5 +1,5 @@
 {
-	"name": "ProductCSV",
+	"name": "Cust_pipe",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage",
@@ -10,11 +10,11 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Product.csv",
+				"fileName": "Customer_Pipe.csv",
 				"folderPath": "Practice-1",
 				"fileSystem": "landing"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": "|",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""

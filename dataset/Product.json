@@ -1,5 +1,5 @@
 {
-	"name": "ProductCSV",
+	"name": "Product",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDataLakeStorage",
@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Product.csv",
-				"folderPath": "Practice-1",
+				"fileName": "Product.json",
+				"folderPath": "Json",
 				"fileSystem": "landing"
 			},
 			"columnDelimiter": ",",
