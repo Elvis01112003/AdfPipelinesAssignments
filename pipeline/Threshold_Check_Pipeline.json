@@ -1,0 +1,327 @@
+{
+	"name": "Threshold_Check_Pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup Threshold",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "ThresholdCSV2",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Lookup Customer Count",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT COUNT(*) AS CustomerCount\nFROM SalesLT.Customer",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Dynamic",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "customer"
+						}
+					}
+				}
+			},
+			{
+				"name": "Check Threshold",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Lookup Threshold",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Lookup Customer Count",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(\nint(activity('Lookup Customer Count').output.firstRow.CustomerCount),\nint(activity('Lookup Threshold').output.firstRow.Threshold)\n)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "False",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SQL_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "customer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_JSON_Customer",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Copy Customer JSON",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "CustomerID",
+												"type": "Int32"
+											},
+											"sink": {
+												"path": "$['CustomerID']"
+											}
+										},
+										{
+											"source": {
+												"name": "NameStyle",
+												"type": "Boolean"
+											},
+											"sink": {
+												"path": "$['NameStyle']"
+											}
+										},
+										{
+											"source": {
+												"name": "Title",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['Title']"
+											}
+										},
+										{
+											"source": {
+												"name": "FirstName",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['FirstName']"
+											}
+										},
+										{
+											"source": {
+												"name": "MiddleName",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['MiddleName']"
+											}
+										},
+										{
+											"source": {
+												"name": "LastName",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['LastName']"
+											}
+										},
+										{
+											"source": {
+												"name": "Suffix",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['Suffix']"
+											}
+										},
+										{
+											"source": {
+												"name": "CompanyName",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['CompanyName']"
+											}
+										},
+										{
+											"source": {
+												"name": "SalesPerson",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['SalesPerson']"
+											}
+										},
+										{
+											"source": {
+												"name": "EmailAddress",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['EmailAddress']"
+											}
+										},
+										{
+											"source": {
+												"name": "Phone",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['Phone']"
+											}
+										},
+										{
+											"source": {
+												"name": "PasswordHash",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['PasswordHash']"
+											}
+										},
+										{
+											"source": {
+												"name": "PasswordSalt",
+												"type": "String"
+											},
+											"sink": {
+												"path": "$['PasswordSalt']"
+											}
+										},
+										{
+											"source": {
+												"name": "rowguid",
+												"type": "Guid"
+											},
+											"sink": {
+												"path": "$['rowguid']"
+											}
+										},
+										{
+											"source": {
+												"name": "ModifiedDate",
+												"type": "DateTime"
+											},
+											"sink": {
+												"path": "$['ModifiedDate']"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SQL_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "customer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_JSON_Customer",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-07-02T07:34:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

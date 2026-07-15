@@ -1,0 +1,104 @@
+{
+	"name": "Foreach_Example2",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach_Query",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.QueryList",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy_Filtered_Data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@item().Query",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SQL_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "customer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DelimitedText2",
+									"type": "DatasetReference",
+									"parameters": {
+										"Folder": "input",
+										"Filename": "customer"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"QueryList": {
+				"type": "array",
+				"defaultValue": [
+					{
+						"Query": "SELECT * FROM SalesLT.Product WHERE ProductID > 100",
+						"Folder": "Product",
+						"File": "Product.csv"
+					},
+					{
+						"Query": "SELECT * FROM SalesLT.Customer WHERE CustomerID > 100 AND CustomerID < 1000",
+						"Folder": "Customer",
+						"File": "Customer.csv"
+					}
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-07-02T10:31:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,287 @@
+{
+	"name": "Foreach_Example_2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup Customer Count",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT COUNT(*) AS CustomerCount\nFROM SalesLT.Customer",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SalesCustomerdb",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Lookup Customer Count",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(int(activity('Lookup Customer Count').output.firstRow.CustomerCount),100)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Truncate customer_copy",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "SalesLT.usp_TruncateCustomerCopy"
+							},
+							"linkedServiceName": {
+								"referenceName": "SalesDatabase",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Copy_Customer_To_Customer_Copy",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Truncate customer_copy",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "CustomerID",
+												"type": "Int32",
+												"physicalType": "int"
+											},
+											"sink": {
+												"name": "CustomerID"
+											}
+										},
+										{
+											"source": {
+												"name": "NameStyle",
+												"type": "Boolean",
+												"physicalType": "bit"
+											},
+											"sink": {
+												"name": "NameStyle"
+											}
+										},
+										{
+											"source": {
+												"name": "Title",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "Title"
+											}
+										},
+										{
+											"source": {
+												"name": "FirstName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "FirstName"
+											}
+										},
+										{
+											"source": {
+												"name": "MiddleName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "MiddleName"
+											}
+										},
+										{
+											"source": {
+												"name": "LastName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "LastName"
+											}
+										},
+										{
+											"source": {
+												"name": "Suffix",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "Suffix"
+											}
+										},
+										{
+											"source": {
+												"name": "CompanyName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "CompanyName"
+											}
+										},
+										{
+											"source": {
+												"name": "SalesPerson",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "SalesPerson"
+											}
+										},
+										{
+											"source": {
+												"name": "EmailAddress",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "EmailAddress"
+											}
+										},
+										{
+											"source": {
+												"name": "Phone",
+												"type": "String",
+												"physicalType": "nvarchar"
+											},
+											"sink": {
+												"name": "Phone"
+											}
+										},
+										{
+											"source": {
+												"name": "PasswordHash",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "PasswordHash"
+											}
+										},
+										{
+											"source": {
+												"name": "PasswordSalt",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "PasswordSalt"
+											}
+										},
+										{
+											"source": {
+												"name": "rowguid",
+												"type": "Guid",
+												"physicalType": "uniqueidentifier"
+											},
+											"sink": {
+												"name": "rowguid"
+											}
+										},
+										{
+											"source": {
+												"name": "ModifiedDate",
+												"type": "DateTime",
+												"physicalType": "datetime"
+											},
+											"sink": {
+												"name": "ModifiedDate"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SQL_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "Customer"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SQL_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "customer_copy"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-07-01T11:38:40Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

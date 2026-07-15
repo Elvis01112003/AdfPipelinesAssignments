@@ -1,0 +1,298 @@
+{
+	"name": "Check_CustomerFile_And_Load",
+	"properties": {
+		"activities": [
+			{
+				"name": "Check Customer File",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_CustomerCSV",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "If Customer File Exists",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Check Customer File",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Check Customer File').output.exists",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Load Customer Table",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "CustomerID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "CustomerID",
+												"type": "Int32",
+												"physicalType": "int"
+											}
+										},
+										{
+											"source": {
+												"name": "NameStyle",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "NameStyle",
+												"type": "Boolean",
+												"physicalType": "bit"
+											}
+										},
+										{
+											"source": {
+												"name": "Title",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Title",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "FirstName",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "FirstName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "MiddleName",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "MiddleName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "LastName",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "LastName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Suffix",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Suffix",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "CompanyName",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "CompanyName",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "SalesPerson",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SalesPerson",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EmailAddress",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "EmailAddress",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "Phone",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Phone",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "PasswordHash",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PasswordHash",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "PasswordSalt",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PasswordSalt",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "rowguid",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "rowguid",
+												"type": "Guid",
+												"physicalType": "uniqueidentifier"
+											}
+										},
+										{
+											"source": {
+												"name": "ModifiedDate",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "ModifiedDate",
+												"type": "DateTime",
+												"physicalType": "datetime"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_CustomerCSV",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SQL_Dynamic",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": "Customer_Copy"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-07-02T07:34:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
