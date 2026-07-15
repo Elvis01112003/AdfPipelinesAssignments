@@ -11,6 +11,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ADLS'"
 		},
+		"AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage'"
+		},
+		"AzureSqlDatabase_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase'"
+		},
 		"SalesDatabase_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'SalesDatabase'"
@@ -18,6 +26,22 @@
 		"ADLS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://elvis01112003adls.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://elvis01112003adls.dfs.core.windows.net/"
+		},
+		"AzureSqlDatabase_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "practicedb01112003.database.windows.net"
+		},
+		"AzureSqlDatabase_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "Mission100Elvis01112003DB"
+		},
+		"AzureSqlDatabase_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
 		},
 		"SalesDatabase_properties_typeProperties_server": {
 			"type": "string",
@@ -61,11 +85,29 @@
 					"ADLS_accountKey": {
 						"value": "[parameters('ADLS_accountKey')]"
 					},
+					"AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage_accountKey')]"
+					},
+					"AzureSqlDatabase_password": {
+						"value": "[parameters('AzureSqlDatabase_password')]"
+					},
 					"SalesDatabase_password": {
 						"value": "[parameters('SalesDatabase_password')]"
 					},
 					"ADLS_properties_typeProperties_url": {
 						"value": "[parameters('ADLS_properties_typeProperties_url')]"
+					},
+					"AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage_properties_typeProperties_url')]"
+					},
+					"AzureSqlDatabase_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqlDatabase_properties_typeProperties_server')]"
+					},
+					"AzureSqlDatabase_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqlDatabase_properties_typeProperties_database')]"
+					},
+					"AzureSqlDatabase_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqlDatabase_properties_typeProperties_userName')]"
 					},
 					"SalesDatabase_properties_typeProperties_server": {
 						"value": "[parameters('SalesDatabase_properties_typeProperties_server')]"
@@ -98,6 +140,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'practiceassignadf2_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "practiceassignadf2_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'practiceassignadf2_ArmTemplate_1')]"
 			]
 		}
 	]
